@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import shop.mtcoding.hiberpc.config.dummy.MyDummyEntity;
+import shop.mtcoding.hiberpc.model.MyDummyEntity;
 import shop.mtcoding.hiberpc.model.user.User;
 import shop.mtcoding.hiberpc.model.user.UserRepository;
 
@@ -38,11 +38,8 @@ public class BoardRepositoryTest extends MyDummyEntity {
 
     @Test
     public void save_test(){
-        // given 1
-        User user = newUser("ssar");
-        User userPS = userRepository.save(user);
-
-        // given 2
+        // given
+        User userPS = userRepository.save(newUser("ssar"));
         Board board = newBoard("제목1", userPS);
 
         // when
@@ -55,20 +52,37 @@ public class BoardRepositoryTest extends MyDummyEntity {
     }
 
     @Test
-    public void update_test(){
-        // given 1 - DB에 영속화
-        User user = newUser("ssar");
-        User userPS = userRepository.save(user);
-        Board board = newBoard("제목1", userPS);
-        Board boardPS = boardRepository.save(board);
+    public void findById_test(){
+        // given 1
+        User userPS = userRepository.save(newUser("ssar"));
+        boardRepository.save(newBoard("제목1", userPS));
 
-        // given 2 - request 데이터
+        // given 2
+        int id = 1;
+
+        // when
+        Board boardPS = boardRepository.findById(id);
+
+        // then
+        assertThat(boardPS.getTitle()).isEqualTo("제목1");
+    }
+
+    @Test
+    public void update_test(){
+        // given 1
+        User userPS = userRepository.save(newUser("ssar"));
+        boardRepository.save(newBoard("제목1", userPS));
+        em.clear();
+
+        // given 2
         String title = "제목12";
         String content = "내용12";
 
         // when
+        Board boardPS = boardRepository.findById(1);
         boardPS.update(title, content);
-        em.flush(); // 트랜잭션 종료시 자동 발동됨
+        em.flush();
+        em.clear();
 
         // then
         Board findBoardPS = boardRepository.findById(1);
@@ -77,14 +91,11 @@ public class BoardRepositoryTest extends MyDummyEntity {
 
     @Test
     public void delete_test(){
-        // given 1 - DB에 영속화
-        User user = newUser("ssar");
-        User userPS = userRepository.save(user);
-        Board board = newBoard("제목1", userPS);
-        Board boardPS = boardRepository.save(board);
+        // given 1
+        User userPS = userRepository.save(newUser("ssar"));
+        boardRepository.save(newBoard("제목1", userPS));
 
-        // given 2 - request 데이터 (Lazy, Eager 쿼리 테스트)
-        // em.clear();
+        // given 2
         int id = 1;
         Board findBoardPS = boardRepository.findById(id);
 
@@ -96,35 +107,68 @@ public class BoardRepositoryTest extends MyDummyEntity {
         Assertions.assertThat(deleteBoardPS).isNull();
     }
 
-    @Test
-    public void findById_test(){
-        // given 1 - DB에 영속화
-        User user = newUser("ssar");
-        userRepository.save(user);
 
-        // given 2
-        int id = 1;
-
-        // when
-        User userPS = userRepository.findById(id);
-
-        // then
-        assertThat(userPS.getUsername()).isEqualTo("ssar");
-    }
 
     @Test
     public void findAll_test(){
         // given
-        List<User> userList = Arrays.asList(newUser("ssar"), newUser("cos"));
-        userList.stream().forEach((user)->{
-            userRepository.save(user);
-        });
+        findAll_given();
 
         // when
-        List<User> userListPS = userRepository.findAll();
-        //System.out.println("테스트 : "+userListPS);
+        List<Board> boardListPS = boardRepository.findAll();
+        System.out.println("테스트 : "+boardListPS);
 
         // then
-        assertThat(userListPS.size()).isEqualTo(2);
+        assertThat(boardListPS.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void findAllJoin_test(){
+        // given
+        findAll_given();
+
+        // when
+        List<Board> boardListPS = boardRepository.findAllJoin();
+        System.out.println("테스트 : "+boardListPS);
+
+        // then
+        assertThat(boardListPS.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void findAllJoinFetch_test(){
+        // given
+        findAll_given();
+
+        // when
+        List<Board> boardListPS = boardRepository.findAllJoinFetch();
+        System.out.println("테스트 : "+boardListPS);
+
+        // then
+        assertThat(boardListPS.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void findAllBatchFetchSize_test(){ // default_batch_fetch_size: 100
+        // given
+        findAll_given();
+
+        // when
+        List<Board> boardListPS = boardRepository.findAll();
+        System.out.println("테스트 : "+boardListPS);
+
+        // then
+        assertThat(boardListPS.size()).isEqualTo(3);
+    }
+
+    private void findAll_given(){
+        User ssarPS = userRepository.save(newUser("ssar"));
+        User cosPS = userRepository.save(newUser("cos"));
+        User lovePS = userRepository.save(newUser("love"));
+        List<Board> boardList = Arrays.asList(newBoard("제목1", ssarPS), newBoard("제목2", cosPS),newBoard("제목3", lovePS));
+        boardList.stream().forEach((board)->{
+            boardRepository.save(board);
+        });
+        em.clear();
     }
 }

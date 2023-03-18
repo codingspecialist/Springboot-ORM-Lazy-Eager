@@ -1,5 +1,6 @@
 package shop.mtcoding.hiberpc.model.reply;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,4 +30,13 @@ public class Reply {
 
     @CreationTimestamp
     private Timestamp createdAt;
+
+    @Builder
+    public Reply(Integer id, User user, Board board, String comment, Timestamp createdAt) {
+        this.id = id;
+        this.user = user;
+        this.board = board;
+        this.comment = comment;
+        this.createdAt = createdAt;
+    }
 }

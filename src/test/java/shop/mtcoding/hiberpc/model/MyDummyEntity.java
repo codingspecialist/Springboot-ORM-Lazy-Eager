@@ -1,10 +1,8 @@
-package shop.mtcoding.hiberpc.config.dummy;
+package shop.mtcoding.hiberpc.model;
 
 import shop.mtcoding.hiberpc.model.board.Board;
+import shop.mtcoding.hiberpc.model.reply.Reply;
 import shop.mtcoding.hiberpc.model.user.User;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 public class MyDummyEntity {
 
@@ -28,6 +26,25 @@ public class MyDummyEntity {
                 .title(title)
                 .content(title)
                 .user(userPS)
+                .build();
+    }
+
+    protected Reply newReply(String comment, User userPS, Board boardPS){
+
+        if(userPS.getId() == null){
+            System.out.println("영속화해서 넣어라!!");
+            return null;
+        }
+
+        if(boardPS.getId() == null){
+            System.out.println("영속화해서 넣어라!!");
+            return null;
+        }
+
+        return Reply.builder()
+                .user(userPS)
+                .board(boardPS)
+                .comment(comment)
                 .build();
     }
 }
