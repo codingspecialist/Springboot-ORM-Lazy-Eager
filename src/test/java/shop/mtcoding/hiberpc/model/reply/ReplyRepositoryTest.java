@@ -1,7 +1,6 @@
 package shop.mtcoding.hiberpc.model.reply;
 
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,6 @@ import shop.mtcoding.hiberpc.model.user.User;
 import shop.mtcoding.hiberpc.model.user.UserRepository;
 
 import javax.persistence.EntityManager;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Import({UserRepository.class, BoardRepository.class, ReplyRepository.class})
 @DataJpaTest

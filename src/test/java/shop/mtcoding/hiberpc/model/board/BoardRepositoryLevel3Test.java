@@ -1,22 +1,19 @@
 package shop.mtcoding.hiberpc.model.board;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import shop.mtcoding.hiberpc.dto.BoardRespDto;
 import shop.mtcoding.hiberpc.model.MyDummyEntity;
-import shop.mtcoding.hiberpc.model.reply.Reply;
 import shop.mtcoding.hiberpc.model.reply.ReplyRepository;
 import shop.mtcoding.hiberpc.model.user.User;
 import shop.mtcoding.hiberpc.model.user.UserRepository;
 
 import javax.persistence.EntityManager;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Import({UserRepository.class, BoardRepository.class, ReplyRepository.class})
 @DataJpaTest
@@ -35,30 +32,81 @@ public class BoardRepositoryLevel3Test extends MyDummyEntity {
     private EntityManager em;
 
     @Test
+    public void setUp_test(){}
+
+    @Test
     public void findByIdTwoWay_test(){ // @ManyToOne(User, Eager), @OneToMany(Reply, Lazy)
         // given
         int id = 1;
 
         // when
-        Board boardPS = boardRepository.findById(id);
+        boardRepository.findById(id);
 
         // then
     }
 
-    //
     @Test
     public void findByIdTwoWayEager_test(){ // @ManyToOne(User, Eager), @OneToMany(Reply, Eager)
         // given
         int id = 1;
 
         // when
-        Board boardPS = boardRepository.findById(id);
+        boardRepository.findById(id);
 
         // then
     }
 
+    // @ManyToOne(User, Eager), @OneToMany(Reply, Lazy)
     @Test
-    public void setUp_test(){}
+    public void findByIdTwoWayJsonFail_test() throws Exception {
+        // given
+        int id = 1;
+
+        // when
+        Board boardPS = boardRepository.findById(id);
+
+        // then
+        try {
+            ObjectMapper om = new ObjectMapper();
+            String boardJson = om.writeValueAsString(boardPS);
+            System.out.println(boardJson);
+        }catch (Exception e){
+            System.out.println("테스트 : 무한루프 "+e.getMessage());
+        }
+    }
+
+    // @JsonIgnoreProperties("board")
+    // @ManyToOne(User, Eager), @OneToMany(Reply, Lazy)
+    @Test
+    public void findByIdTwoWayJsonIgnoreProperties_test() throws Exception {
+        // given
+        int id = 1;
+
+        // when
+        Board boardPS = boardRepository.findById(id);
+
+        // then
+        ObjectMapper om = new ObjectMapper();
+        String boardJson = om.writeValueAsString(boardPS);
+        System.out.println("테스트 : "+boardJson);
+    }
+
+    // Dto
+    // @ManyToOne(User, Eager), @OneToMany(Reply, Lazy)
+    @Test
+    public void findByIdTwoWayJsonDto_test() throws Exception {
+        // given
+        int id = 1;
+
+        // when
+        Board boardPS = boardRepository.findById(id);
+
+        // then
+        BoardRespDto boardRespDto = new BoardRespDto(boardPS);
+        ObjectMapper om = new ObjectMapper();
+        String boardRespJson = om.writeValueAsString(boardRespDto);
+        System.out.println("테스트 : "+boardRespJson);
+    }
 
     @BeforeEach
     public void setUp() {

@@ -1,6 +1,7 @@
 package shop.mtcoding.hiberpc.model.board;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,9 @@ public class Board {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    // @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("board")
+    // @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replyList = new ArrayList<>();
 
     private String title;
