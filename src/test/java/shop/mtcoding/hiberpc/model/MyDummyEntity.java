@@ -29,21 +29,14 @@ public class MyDummyEntity {
                 .build();
     }
 
-    protected Reply newReply(String comment, User userPS, Board boardPS){
-
+    protected Reply newReply(String comment, User userPS){
         if(userPS.getId() == null){
-            System.out.println("영속화해서 넣어라!!");
-            return null;
-        }
-
-        if(boardPS.getId() == null){
             System.out.println("영속화해서 넣어라!!");
             return null;
         }
 
         return Reply.builder()
                 .user(userPS)
-                .board(boardPS)
                 .comment(comment)
                 .build();
     }

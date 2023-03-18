@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@Setter
 @Getter
 @Table(name = "board_tb")
 @Entity
@@ -24,17 +23,29 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    // @ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "board")
-    private List<Reply> replys = new ArrayList<>();
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    // @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<Reply> replyList = new ArrayList<>();
 
     private String title;
     private String content;
 
     @CreationTimestamp
     private Timestamp createdAt;
+
+    public void addReply(Reply reply){
+        replyList.add(reply);
+        reply.syncBoard(this);
+    }
+
+    public void removeReply(Reply reply){
+        replyList.remove(reply);
+        reply.syncBoard(null);
+    }
 
     @Builder
     public Board(Integer id, User user, String title, String content, Timestamp createdAt) {

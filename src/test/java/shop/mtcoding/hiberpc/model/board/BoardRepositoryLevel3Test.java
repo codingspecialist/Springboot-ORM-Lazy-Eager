@@ -1,15 +1,14 @@
-package shop.mtcoding.hiberpc.model.reply;
+package shop.mtcoding.hiberpc.model.board;
 
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import shop.mtcoding.hiberpc.model.MyDummyEntity;
-import shop.mtcoding.hiberpc.model.board.Board;
-import shop.mtcoding.hiberpc.model.board.BoardRepository;
+import shop.mtcoding.hiberpc.model.reply.Reply;
+import shop.mtcoding.hiberpc.model.reply.ReplyRepository;
 import shop.mtcoding.hiberpc.model.user.User;
 import shop.mtcoding.hiberpc.model.user.UserRepository;
 
@@ -21,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Import({UserRepository.class, BoardRepository.class, ReplyRepository.class})
 @DataJpaTest
-public class ReplyRepositoryTest extends MyDummyEntity {
+public class BoardRepositoryLevel3Test extends MyDummyEntity {
 
     @Autowired
     private UserRepository userRepository;
@@ -36,29 +35,30 @@ public class ReplyRepositoryTest extends MyDummyEntity {
     private EntityManager em;
 
     @Test
-    public void findById_test() {
+    public void findByIdTwoWay_test(){ // @ManyToOne(User, Eager), @OneToMany(Reply, Lazy)
+        // given
+        int id = 1;
 
+        // when
+        Board boardPS = boardRepository.findById(id);
+
+        // then
+    }
+
+    //
+    @Test
+    public void findByIdTwoWayEager_test(){ // @ManyToOne(User, Eager), @OneToMany(Reply, Eager)
+        // given
+        int id = 1;
+
+        // when
+        Board boardPS = boardRepository.findById(id);
+
+        // then
     }
 
     @Test
-    public void save_test() {
-
-    }
-
-    @Test
-    public void update_test() {
-
-    }
-
-    @Test
-    public void delete_test() {
-
-    }
-
-    @Test
-    public void findAll_test() {
-
-    }
+    public void setUp_test(){}
 
     @BeforeEach
     public void setUp() {

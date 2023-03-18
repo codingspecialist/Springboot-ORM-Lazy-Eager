@@ -12,7 +12,6 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
-@Setter
 @Getter
 @Table(name = "reply_tb")
 @Entity
@@ -31,11 +30,14 @@ public class Reply {
     @CreationTimestamp
     private Timestamp createdAt;
 
+    public void syncBoard(Board board){
+        this.board = board;
+    }
+
     @Builder
-    public Reply(Integer id, User user, Board board, String comment, Timestamp createdAt) {
+    public Reply(Integer id, User user, String comment, Timestamp createdAt) {
         this.id = id;
         this.user = user;
-        this.board = board;
         this.comment = comment;
         this.createdAt = createdAt;
     }

@@ -1,7 +1,6 @@
 package shop.mtcoding.hiberpc.model.board;
 
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Import({UserRepository.class, BoardRepository.class})
 @DataJpaTest
-public class BoardRepositoryTest extends MyDummyEntity {
+public class BoardRepositoryLevel2Test extends MyDummyEntity {
 
     @Autowired
     private UserRepository userRepository;
@@ -37,30 +36,17 @@ public class BoardRepositoryTest extends MyDummyEntity {
     }
 
     @Test
-    public void save_test(){
-        // given
-        User userPS = userRepository.save(newUser("ssar"));
-        Board board = newBoard("제목1", userPS);
-
-        // when
-        Board boardPS = boardRepository.save(board);
-        System.out.println("테스트 : "+boardPS);
-
-        // then
-        assertThat(boardPS.getId()).isEqualTo(1);
-        assertThat(boardPS.getUser().getId()).isEqualTo(1);
-    }
-
-    @Test
-    public void findById_test(){
+    public void findByIdLazy_test(){ // @ManyToOne(User, Lazy)
         // given 1
         User userPS = userRepository.save(newUser("ssar"));
         boardRepository.save(newBoard("제목1", userPS));
+        em.clear();
 
         // given 2
         int id = 1;
 
         // when
+        System.out.println("테스트 : board만 조회 ======================");
         Board boardPS = boardRepository.findById(id);
 
         // then
@@ -68,62 +54,28 @@ public class BoardRepositoryTest extends MyDummyEntity {
     }
 
     @Test
-    public void update_test(){
+    public void findByIdLazyLoading_test(){ // @ManyToOne(User, Lazy)
         // given 1
         User userPS = userRepository.save(newUser("ssar"));
         boardRepository.save(newBoard("제목1", userPS));
         em.clear();
-
-        // given 2
-        String title = "제목12";
-        String content = "내용12";
-
-        // when
-        Board boardPS = boardRepository.findById(1);
-        boardPS.update(title, content);
-        em.flush();
-        em.clear();
-
-        // then
-        Board findBoardPS = boardRepository.findById(1);
-        assertThat(findBoardPS.getContent()).isEqualTo("내용12");
-    }
-
-    @Test
-    public void delete_test(){
-        // given 1
-        User userPS = userRepository.save(newUser("ssar"));
-        boardRepository.save(newBoard("제목1", userPS));
 
         // given 2
         int id = 1;
-        Board findBoardPS = boardRepository.findById(id);
 
         // when
-        boardRepository.delete(findBoardPS);
+        System.out.println("테스트 : board만 조회 ======================");
+        Board boardPS = boardRepository.findById(id);
+        System.out.println("테스트 : username Lazy Loading ======================");
+        String username = boardPS.getUser().getUsername();
+        System.out.println("테스트 : "+username);
 
         // then
-        Board deleteBoardPS = boardRepository.findById(1);
-        Assertions.assertThat(deleteBoardPS).isNull();
-    }
-
-
-
-    @Test
-    public void findAll_test(){
-        // given
-        findAll_given();
-
-        // when
-        List<Board> boardListPS = boardRepository.findAll();
-        System.out.println("테스트 : "+boardListPS);
-
-        // then
-        assertThat(boardListPS.size()).isEqualTo(3);
+        assertThat(boardPS.getTitle()).isEqualTo("제목1");
     }
 
     @Test
-    public void findAllJoin_test(){
+    public void findAllJoin_test(){ // @ManyToOne(User, Eager)
         // given
         findAll_given();
 
@@ -136,7 +88,7 @@ public class BoardRepositoryTest extends MyDummyEntity {
     }
 
     @Test
-    public void findAllJoinFetch_test(){
+    public void findAllJoinFetch_test(){ // @ManyToOne(User, Eager)
         // given
         findAll_given();
 
@@ -149,7 +101,7 @@ public class BoardRepositoryTest extends MyDummyEntity {
     }
 
     @Test
-    public void findAllBatchFetchSize_test(){ // default_batch_fetch_size: 100
+    public void findAllBatchFetchSize_test(){ // // @ManyToOne(User, Eager), default_batch_fetch_size: 100
         // given
         findAll_given();
 
