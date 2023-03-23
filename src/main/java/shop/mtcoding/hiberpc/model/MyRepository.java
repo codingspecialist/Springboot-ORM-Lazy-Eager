@@ -1,5 +1,7 @@
 package shop.mtcoding.hiberpc.model;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import java.util.List;
 
@@ -16,6 +18,8 @@ public abstract class MyRepository<T> {
     public List<T> findAll(){
         return em.createQuery("select alias from "+getEntityName()+" alias", getEntityClass()).getResultList();
     }
+
+    @Transactional
     public T save(T entity){
         try {
             // Object id = getEntityClass().getMethod("getId").invoke(entity);
@@ -32,6 +36,7 @@ public abstract class MyRepository<T> {
         return entity;
     }
 
+    @Transactional
     public void delete(T entity){
         em.remove(entity);
     }

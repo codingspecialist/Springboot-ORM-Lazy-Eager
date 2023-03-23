@@ -7,17 +7,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import shop.mtcoding.hiberpc.dto.BoardDetailDto;
 import shop.mtcoding.hiberpc.dto.BoardRespDto;
 import shop.mtcoding.hiberpc.model.MyDummyEntity;
+import shop.mtcoding.hiberpc.model.reply.Reply;
 import shop.mtcoding.hiberpc.model.reply.ReplyRepository;
 import shop.mtcoding.hiberpc.model.user.User;
 import shop.mtcoding.hiberpc.model.user.UserRepository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Import({UserRepository.class, BoardRepository.class, ReplyRepository.class})
 @DataJpaTest
-public class BoardRepositoryLevel3Test extends MyDummyEntity {
+public class BoardRepositoryLevel4Test extends MyDummyEntity {
 
     @Autowired
     private UserRepository userRepository;
@@ -33,6 +36,32 @@ public class BoardRepositoryLevel3Test extends MyDummyEntity {
 
     @Test
     public void setUp_test(){}
+
+    @Test
+    public void findByIdJPQL(){
+        // given
+        int id = 1;
+
+        // when
+        boardRepository.findByIdJPQL(id);
+    }
+
+    @Test
+    public void findByIdNativeQuery(){
+        // given
+        int id = 1;
+
+        // when
+        List<BoardDetailDto> boardList = boardRepository.findByIdNativeQuery(id);
+        for (BoardDetailDto dto:boardList) {
+            System.out.println("테스트 게시글 제목: "+dto.getTitle());
+            System.out.println("테스트 게시글 작성자: "+dto.getUUsername());
+            System.out.println("테스트 댓글 내용: "+dto.getRComment());
+            System.out.println("테스트 댓글 작성자: "+dto.getRuUsername());
+        }
+    }
+
+
 
     @Test
     public void findByIdTwoWayLazy_test(){ // @ManyToOne(User, Eager), @OneToMany(Reply, Lazy)
