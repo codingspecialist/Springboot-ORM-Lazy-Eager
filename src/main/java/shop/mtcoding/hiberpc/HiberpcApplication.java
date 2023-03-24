@@ -11,6 +11,8 @@ import java.util.Map;
 @SpringBootApplication
 public class HiberpcApplication {
 
+
+
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(HiberpcApplication.class, args);
         Map<String, Object> repositories = context.getBeansWithAnnotation(Repository.class);

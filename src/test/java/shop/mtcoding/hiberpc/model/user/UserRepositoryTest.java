@@ -46,6 +46,7 @@ public class UserRepositoryTest extends MyDummyEntity {
     public void findById_test(){
         // given 1
         userRepository.save(newUser("ssar"));
+        em.clear();
 
         // given 2
         int id = 1;
@@ -61,24 +62,28 @@ public class UserRepositoryTest extends MyDummyEntity {
     public void update_test(){
         // given 1
         userRepository.save(newUser("ssar"));
+        em.clear(); // 준영속
 
         // given 2
         String password = "5678";
         String email = "ssar@gmail.com";
 
         // when
-        User userPS = userRepository.findById(1);
-        userPS.update(password, email);
+        // update 하는 법 : 1. 영속화 시킨다, 2. 변경한다. 3. 트랜잭션이 종료된다.(변경감지, flush)
+        User userPS = userRepository.findById(1); // 캐싱을 못했음.
+        userPS.update(password, email); // 영속화 된것을 변경
         User updateUserPS = userRepository.save(userPS);
+        em.flush(); // hibernate가 변경감지
 
         // then
         assertThat(updateUserPS.getPassword()).isEqualTo("5678");
-    }
+    } // rollback
 
     @Test
     public void update_dutty_checking_test(){
         // given 1
         userRepository.save(newUser("ssar"));
+        em.clear();
 
         // given 2
         String password = "5678";
@@ -92,6 +97,7 @@ public class UserRepositoryTest extends MyDummyEntity {
         // then
         User updateUserPS = userRepository.findById(1);
         assertThat(updateUserPS.getPassword()).isEqualTo("5678");
+        assertThat(updateUserPS.getEmail()).isEqualTo("ssar@gmail.com");
     }
 
     @Test
@@ -110,7 +116,7 @@ public class UserRepositoryTest extends MyDummyEntity {
         // then
         User deleteUserPS = userRepository.findById(1);
         Assertions.assertThat(deleteUserPS).isNull();
-    }
+    } // rollback
 
     @Test
     public void findAll_test(){

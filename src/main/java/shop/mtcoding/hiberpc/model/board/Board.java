@@ -1,20 +1,16 @@
 package shop.mtcoding.hiberpc.model.board;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import shop.mtcoding.hiberpc.model.reply.Reply;
 import shop.mtcoding.hiberpc.model.user.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
+@Setter
 @NoArgsConstructor
 @Getter
 @Table(name = "board_tb")
@@ -24,14 +20,15 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne
-    private User user;
+    // OneToMany는 디폴트 전략이 Lazy 이다.
+    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne // 디폴트 전략은 EAGER
+    private User user; // DB의 모든 칼럼은 데이터가 스칼라이다. (원자성) -> db에는 user_id
 
-    @JsonIgnoreProperties("board")
+    //@JsonIgnoreProperties("board")
     // @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replyList = new ArrayList<>();
+    //@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Reply> replyList = new ArrayList<>();
 
     private String title;
     private String content;
@@ -39,15 +36,15 @@ public class Board {
     @CreationTimestamp
     private Timestamp createdAt;
 
-    public void addReply(Reply reply){
-        replyList.add(reply);
-        reply.syncBoard(this);
-    }
-
-    public void removeReply(Reply reply){
-        replyList.remove(reply);
-        reply.syncBoard(null);
-    }
+//    public void addReply(Reply reply){
+//        replyList.add(reply);
+//        reply.syncBoard(this);
+//    }
+//
+//    public void removeReply(Reply reply){
+//        replyList.remove(reply);
+//        reply.syncBoard(null);
+//    }
 
     @Builder
     public Board(Integer id, User user, String title, String content, Timestamp createdAt) {

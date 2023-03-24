@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@NoArgsConstructor
+@Setter
+@NoArgsConstructor // Hibernate 때문에
 @Getter
 @Table(name = "user_tb")
 @Entity
@@ -18,7 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String username;
-    @JsonIgnore
+    @JsonIgnore // ObjectMapper가 파싱하지 않는다.
     private String password;
     private String email;
     @CreationTimestamp

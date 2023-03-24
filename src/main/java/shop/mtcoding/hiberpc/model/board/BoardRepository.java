@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import shop.mtcoding.hiberpc.model.MyRepository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 @Repository

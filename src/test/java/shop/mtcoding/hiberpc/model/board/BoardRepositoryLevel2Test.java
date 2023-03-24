@@ -67,7 +67,10 @@ public class BoardRepositoryLevel2Test extends MyDummyEntity {
         System.out.println("테스트 : board만 조회 ======================");
         Board boardPS = boardRepository.findById(id);
         System.out.println("테스트 : username Lazy Loading ======================");
-        String username = boardPS.getUser().getUsername();
+
+        em.clear();
+
+        String username = boardPS.getUser().getUsername(); // 값 있어요? -> no session 대신에 lazy loading 즉 조회쿼리날라감
         System.out.println("테스트 : "+username);
 
         // then
