@@ -1,11 +1,14 @@
 package shop.mtcoding.hiberpc.model.board;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import shop.mtcoding.hiberpc.dto.BoardDto;
 import shop.mtcoding.hiberpc.model.MyDummyEntity;
 import shop.mtcoding.hiberpc.model.user.User;
 import shop.mtcoding.hiberpc.model.user.UserRepository;
@@ -13,6 +16,7 @@ import shop.mtcoding.hiberpc.model.user.UserRepository;
 import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,6 +56,19 @@ public class BoardRepositoryLevel5Test extends MyDummyEntity {
         // then
         assertThat(boardPS.getTitle()).isEqualTo("제목1");
     }
+
+    @Test
+    public void findAllAndInQueryV2_test() throws JsonProcessingException {
+        // given
+        findAll_given();
+
+        // when
+        List<Board> boardList = boardRepository.findAllAndInQueryV2();
+        ObjectMapper om = new ObjectMapper();
+        String responseBody =  om.writeValueAsString(boardList);
+        System.out.println(responseBody);
+    }
+
 
     private void findAll_given(){
         User ssarPS = userRepository.save(newUser("ssar"));
